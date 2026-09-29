@@ -14,7 +14,7 @@ Cada versão é uma *release* com a tag `<app>-v<versão>`, por exemplo `nexo-ai
 | `manifest.json` | versão, canal, notas da versão e SHA-256 do instalador |
 | `manifest.sig` | assinatura do `manifest.json` |
 
-Exemplo de `manifest.json`:
+Exemplo de `manifest.json` (o formato é conferido por `errosDoManifesto` no `nexo-padrao`; este exemplo passa na conferência):
 
 ```json
 {
@@ -22,12 +22,33 @@ Exemplo de `manifest.json`:
   "version": "0.5.1",
   "channel": "stable",
   "published": "2026-09-29",
-  "installer": { "file": "NEXO-AI-0.5.1-x64.exe", "sha256": "<hash>" },
+  "publishedBy": "claude",
+  "installer": { "file": "NEXO-AI-0.5.1-x64.exe", "sha256": "<64 caracteres hexadecimais>" },
   "notes": [
-    { "type": "new", "text": "Leitura do Claude mais rápida", "authors": ["claude", "rodrigo"], "explainedBy": "claude" }
+    { "type": "new", "text": "Leitura do Claude mais rápida", "authors": ["claude", "rodrigo"] }
   ]
 }
 ```
+
+- `publishedBy`: quem executou a publicação (`rodrigo`, `claude` ou `codex`).
+- `notes[].authors`: o primeiro é o autor principal, que explica o item; os demais são coautores.
+
+### Versão obrigatória e versão mínima
+
+As duas impedem o app de abrir e são independentes. As duas exigem o pedido explícito do Rodrigo, registrado em `blockRequestedBy`, e um motivo escrito, que aparece para a pessoa.
+
+```json
+{
+  "blockRequestedBy": "rodrigo",
+  "mandatory": { "reason": "Corrige leitura errada do Claude", "from": "2026-10-03T18:00:00-03:00" },
+  "minVersion": "0.5.0",
+  "minVersionReason": "Formato de dados novo"
+}
+```
+
+- `mandatory.from`: a partir de quando a versão é obrigatória. Data e hora completas **com fuso**. Até lá, a pessoa vê um aviso importante.
+- `mandatory.immediate: true`: obrigatória na hora, **só para falha grave de segurança**, no lugar de `from`. Sem uma das duas, o manifesto é recusado.
+- `minVersion`: abaixo dela o app não abre. Não pode ser maior que `version`. Abaixo da mínima aparece só `minVersionReason`.
 
 ## Segurança
 
@@ -38,4 +59,4 @@ Exemplo de `manifest.json`:
 ## Canais
 
 - `stable`: versões liberadas para todos.
-- `candidate`: versões de teste, só para quem escolheu esse canal no app.
+- `rc`: versões candidatas, só para testadores convidados que escolheram esse canal no app.
