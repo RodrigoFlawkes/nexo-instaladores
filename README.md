@@ -14,7 +14,7 @@ Cada versão é uma *release* com a tag `<app>-v<versão>`, por exemplo `nexo-ai
 | `manifest.json` | versão, canal, notas da versão e SHA-256 do instalador |
 | `manifest.sig` | assinatura do `manifest.json` |
 
-Exemplo de `manifest.json` (o formato é conferido por `errosDoManifesto` no `nexo-padrao`; este exemplo passa na conferência):
+Exemplo de `manifest.json` (os apps conferem o formato antes de usar; com o SHA-256 real do instalador no lugar do texto entre `< >`, este exemplo passa na conferência):
 
 ```json
 {
